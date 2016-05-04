@@ -1,6 +1,10 @@
 # Match JSON Loader
 Webpack loader to match JSON against given etalon.
 
+# Install
+
+```npm i -D match-json-loader```
+
 # How to use it
 It is convenient to use it as preloader for your json files.
 Alternatively it can be run before json loader, because [match-json-loader](https://github.com/ggarek/match-json-loader) does not modify source.
