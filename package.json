@@ -15,7 +15,7 @@
     "json",
     "match",
     "compare",
-    "validatation",
+    "validation",
     "preloader"
   ],
   "author": "Igor Ovsiannikov <garek@mail.ru>",
