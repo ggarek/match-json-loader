@@ -31,9 +31,9 @@ function loadEtalonJSON(path) {
 }
 
 function matchJSON(etalon, other, opts) {
-  const { matchTypes } = opts;
   const eKeys = Object.keys(etalon);
-  const mismatches = { absentKeys: [], typeMismatches: [] };
+  const oKeys = Object.keys(other);
+  const mismatches = { absentKeys: [], typeMismatches: [], excessKeys: [] };
 
   for (let eKey of eKeys) {
     if (!other.hasOwnProperty(eKey)) {
@@ -41,7 +41,7 @@ function matchJSON(etalon, other, opts) {
       continue;
     }
 
-    if (matchTypes) {
+    if (opts.matchTypes) {
       const eVal = etalon[eKey];
       const oVal = other[eKey];
 
@@ -55,28 +55,52 @@ function matchJSON(etalon, other, opts) {
     }
   }
 
+  if (opts.excessKeys) {
+    for (let oKey of oKeys) {
+      if (!etalon.hasOwnProperty(oKey)) {
+        mismatches.excessKeys.push(oKey);
+      }
+    }
+  }
+
   return mismatches;
 }
 
 function isMatch(mismatches) {
-  return mismatches.absentKeys.length === 0 && mismatches.typeMismatches.length === 0;
+  return (
+    mismatches.absentKeys.length === 0 &&
+    mismatches.typeMismatches.length === 0 &&
+    mismatches.excessKeys.length === 0
+  );
 }
 
 function formatMessage(mismatches) {
   const messages = [];
   if (mismatches.absentKeys.length > 0) {
-    messages.push(`absent keys:\n${mismatches.absentKeys.join('\n')}`);
+    const list = mismatches.absentKeys.join('\n');
+    messages.push(`absent keys:\n${list}`);
   }
   if (mismatches.typeMismatches.length > 0) {
-    const list = mismatches.typeMismatches.reduce(
-        (all, [key, expected, got]) => `${key} expected to be ${expected}, but got ${got}\n`,
-      ''
-  );
+    const list = mismatches.typeMismatches
+      .reduce((all, [key, expected, got]) => `${key} expected to be ${expected}, but got ${got}\n`, '');
     messages.push(`type mismatches:\n${list}`);
+  }
+  if(mismatches.excessKeys.length > 0) {
+    const list = mismatches.excessKeys.join('\n');
+    messages.push(`excess keys:\n${list}`);
   }
 
   return messages;
 }
+
+/**
+ * Default options for loader
+ * @type {{matchTypes: boolean, absentKeys: boolean, excessKeys: boolean}}
+ */
+const defaultOptions = {
+  matchTypes: true,
+  excessKeys: true
+};
 
 /**
  *  Webpack loader to match JSON against given etalon.
@@ -89,15 +113,16 @@ module.exports = function matchJSONLoader(source) {
   }
 
   const query = loaderUtils.parseQuery(this.query);
-  const sourceJSON = typeof source === 'string' ? JSON.parse(source) : source;
+  const options = defaultOptions;
 
+  const sourceJSON = typeof source === 'string' ? JSON.parse(source) : source;
   const etalonPath = path.join(path.dirname(this.resourcePath), getEtalonNameFromQuery(query));
 
   // Do not match etalon
   if (etalonPath !== this.resourcePath) {
     const etalonJSON = loadEtalonJSON(etalonPath);
 
-    const mismatches = matchJSON(etalonJSON, sourceJSON, { matchTypes: true });
+    const mismatches = matchJSON(etalonJSON, sourceJSON, options);
 
     if (!isMatch(mismatches)) {
       throw new Error(
