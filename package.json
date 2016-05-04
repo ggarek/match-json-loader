@@ -1,6 +1,6 @@
 {
   "name": "match-json-loader",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Webpack loader to match JSON against given etalon.",
   "main": "src/index.js",
   "files": [
