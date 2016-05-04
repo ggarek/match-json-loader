@@ -3,7 +3,7 @@ Webpack loader to match JSON against given etalon.
 
 # How to use it
 It is convenient to use it as preloader for your json files.
-Alternatively it can be run before json loader, because match-json-loader does not modify source.
+Alternatively it can be run before json loader, because [match-json-loader does](https://github.com/ggarek/match-json-loader) not modify source.
 
 Let assume that you want to verify locales in your app.
 If you have a directory hierarchy:
@@ -16,7 +16,7 @@ src/
     pt.json
 ```
 
-Then you can add match-json-loader to your webpack config, like this:
+Then you can add [match-json-loader](https://github.com/ggarek/match-json-loader) to your webpack config, like this:
 
 ```javascript
 const config = {
@@ -34,7 +34,7 @@ const config = {
 }
 ```
 
-And it will match every ``*.json` file under `src/locales/` to match with `en.json`. Thats it.
+And it will match every `*.json` file under `src/locales/` against `en.json`. Thats it.
 
 # Options
 
@@ -51,4 +51,9 @@ Is `true` by default. If the option is true, the keys that are in matched json, 
 # Configuration examples
 
 Do not report excess keys and do not match types of properties
+
 `match-json-loader?etalon=en&excessKeys=false&matchTypes=false`
+
+Report excess keys and match types. Note that etalon is specified with extension.
+
+`match-json-loader?etalon=en.json&excessKeys&matchTypes`
