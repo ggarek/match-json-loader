@@ -3,7 +3,7 @@ Webpack loader to match JSON against given etalon.
 
 # How to use it
 It is convenient to use it as preloader for your json files.
-Alternatively it can be run before json loader, because [match-json-loader does](https://github.com/ggarek/match-json-loader) not modify source.
+Alternatively it can be run before json loader, because [match-json-loader](https://github.com/ggarek/match-json-loader) does not modify source.
 
 Let assume that you want to verify locales in your app.
 If you have a directory hierarchy:
