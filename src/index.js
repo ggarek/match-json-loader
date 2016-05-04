@@ -113,7 +113,7 @@ module.exports = function matchJSONLoader(source) {
   }
 
   const query = loaderUtils.parseQuery(this.query);
-  const options = defaultOptions;
+  const options = Object.assign({}, defaultOptions, query);
 
   const sourceJSON = typeof source === 'string' ? JSON.parse(source) : source;
   const etalonPath = path.join(path.dirname(this.resourcePath), getEtalonNameFromQuery(query));
