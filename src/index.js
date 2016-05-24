@@ -1,10 +1,13 @@
+'use strict';
+
 const loaderUtils = require('loader-utils');
 const fs = require('fs');
 const path = require('path');
 
 const pre = '[match-json-loader]';
 
-function getEtalonNameFromQuery({ etalon }) {
+function getEtalonNameFromQuery(query) {
+  const etalon = query.etalon;
   if (!etalon || typeof etalon !== 'string') {
     throw new Error(`${pre}: etalon is mandatory parameter and should be valid file name`);
   }
@@ -82,7 +85,12 @@ function formatMessage(mismatches) {
   }
   if (mismatches.typeMismatches.length > 0) {
     const list = mismatches.typeMismatches
-      .reduce((all, [key, expected, got]) => `${key} expected to be ${expected}, but got ${got}\n`, '');
+      .reduce((all, info) => {
+        const key = info[0];
+        const expected = info[1];
+        const got = info[2];
+        return `${key} expected to be ${expected}, but got ${got}\n`
+      }, '');
     messages.push(`type mismatches:\n${list}`);
   }
   if(mismatches.excessKeys.length > 0) {
